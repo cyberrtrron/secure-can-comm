@@ -1,15 +1,24 @@
-# crypto_utils.py
+# app/crypto_utils.py
 from cryptography.fernet import Fernet
 
-# Generate a key (one-time setup)
-# key = Fernet.generate_key()
-# print(key.decode())
+class CryptoUtils:
+    def __init__(self, key=None):
+        if key:
+            self.key = key
+        else:
+            self.key = Fernet.generate_key()
+        self.cipher = Fernet(self.key)
 
-key = b'your_pre_generated_fernet_key_here'  # Store securely
-cipher = Fernet(key)
-
-def encrypt_message(message: str, key=None):
-    return cipher.encrypt(message.encode()).decode()
-
-def decrypt_message(token: str, key=None):
-    return cipher.decrypt(token.encode()).decode()
+    def encrypt_message(self, message):
+        """Encrypt a message."""
+        encrypted_message = self.cipher.encrypt(message.encode())
+        return encrypted_message
+    
+    def decrypt_message(self, encrypted_message):
+        """Decrypt a message."""
+        decrypted_message = self.cipher.decrypt(encrypted_message).decode()
+        return decrypted_message
+        
+    def get_key(self):
+        """Get the current encryption key."""
+        return self.key
